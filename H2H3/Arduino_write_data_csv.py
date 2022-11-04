@@ -6,7 +6,7 @@ import numpy as np
 
 rm = pyvisa.ResourceManager("@py")
 ports = rm.list_resources()
-device = rm.open_resource("ASRL/dev/cu.usbmodem11101::INSTR", read_termination="\r\n", write_termination="\n")
+device = rm.open_resource("ASRL/dev/cu.usbmodem1101::INSTR", read_termination="\r\n", write_termination="\n")
 
 def volt_adc(number):
     v = np.asarray(number)*3.3/1024
@@ -16,7 +16,7 @@ def adc_volt(number):
     return adc
 
 
-measurement = "blauwe_led_11"
+measurement = "Checkblauwe_led_11"
 if os.path.isfile(f"LED_curve_m{measurement}.csv") == True:
     print('File excists',os.path.isfile(f"LED_curve_m{measurement}.csv"))
 else:

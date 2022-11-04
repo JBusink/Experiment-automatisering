@@ -1,5 +1,6 @@
 import numpy as np
 class ElectronicLoadMeasurements:
+    '''Docstring example'''
     #Algemene uitleg over de class ElectronicLoadMeasurements.
     #Geen overbodige code.
     #Geen onnodige ingewikkelde structuren.
