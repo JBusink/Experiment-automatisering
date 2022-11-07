@@ -1,5 +1,4 @@
 import pyvisa
-import numpy as np
 def list_devices():
     '''Function that returns the ports of the usb.
     '''
@@ -7,13 +6,12 @@ def list_devices():
     ports = rm.list_resources()
     return (ports)
 
-class DeviceNotFoundError(Exception):
-    """Device not found error.
+def stand_by(device):
+    '''Function that returns the ports of the usb.
+    '''
+    device.query("OUT:CH0 0")
 
-    Raised when a device is requested, but not found.
-    """
-
-    pass
+    return 
 
 class ArduinoVISADevice:
     """set input value of device, return output device
@@ -53,14 +51,3 @@ class ArduinoVISADevice:
     def get_input_volt(self, channel):
         return float(self.device.query(f"MEAS:CH{channel}:VOLT?"))
     
-# port = "ASRL/dev/cu.usbmodem11101::INSTR"
-# device = ArduinoVISADevice(port = port)
-
-# device.set_output_volt(channel =1,value =2.9)
-# device.set_output_value(channel = 0, value=1023)
-
-# print(device.get_output_value(channel = 0))
-# print(device.get_output_volt(channel = 0))
-
-# print(device.get_input_value(channel = 0))
-# print(device.get_input_volt(channel = 0))

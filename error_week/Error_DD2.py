@@ -1,32 +1,11 @@
 import pyvisa
-import numpy as np
 import matplotlib.pyplot as plt
 
 rm = pyvisa.ResourceManager("@py")
-ports = rm.list_resources()
-device = rm.open_resource(ports[2], read_termination="\r\n", write_termination="\n")
-print(device.query("*IDN?"))
+ports = rm.list_resources() #check if ports[1] is the correct port for you.
+device = rm.open_resource(ports[1], read_termination="\r\n", write_termination="\n")
 
-def adc_volt(adc):
-    '''(input is voltage V= {0,3.3}
-    returns adc = {1,1024})^-1'''
-    return np.asarray(adc)*3.3/1024
-
-def volt_adc(volt):
-    '''input is voltage V= {0,3.3}
-    returns adc = {1,1024}'''
-    return np.asarray(volt)*1024/3.3
-
-#2.8 breathing_light.py
-#2.9
-print(adc_volt(700))
-print("minimal value of voltage: ", adc_volt(1))
-print("2.0 V :", volt_adc(2.0))
-print("2.28 V :", volt_adc(2.28))
-
-#2.10
-
-
+print(device.query("*IDN?")) #Returns adruino VISA firmware version.
 
 VLEDlist,V2list =[],[]
 for i in range(1024,10): #Measure every tenth value.

@@ -1,8 +1,11 @@
+from arduino_device import ArduinoVISADevice, list_devices
 class DiodeExperiment:
     _ch_set_diode_voltage =0
     _resistor_value = 220.
     _max_voltage = 3.3
     def __init__(self):
+        
+        self.device=ArduinoVISADevice(port=port)
         return
 
     def standby(self):
