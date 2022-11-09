@@ -50,4 +50,5 @@ class ArduinoVISADevice:
 
     def get_input_volt(self, channel):
         return float(self.device.query(f"MEAS:CH{channel}:VOLT?"))
-    
+
+

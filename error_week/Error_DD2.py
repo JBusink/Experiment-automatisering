@@ -1,34 +1,22 @@
-import pyvisa
 import matplotlib.pyplot as plt
 
-rm = pyvisa.ResourceManager("@py")
-ports = rm.list_resources() #check if ports[1] is the correct port for you.
-device = rm.open_resource(ports[1], read_termination="\r\n", write_termination="\n")
+#Voltage measured at Ch.1 and Ch.2 
+V1list = [0.01, 0.15, 0.31, 0.47, 0.64, 0.79, 0.95, 1.13, 1.28, 1.44,
+          1.59, 1.76, 1.92, 2.09, 2.25, 2.4, 2.57, 2.72, 2.88, 3.03, 3.09]
+V2list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+          0.0, 0.0, 0.0, 0.0, 0.02, 0.12, 0.23, 0.36, 0.49, 0.55]
 
-print(device.query("*IDN?")) #Returns adruino VISA firmware version.
+VLED = V1list - V2list #Voltage drop across the LED
+Resistance = 220. #Resistance
+Iled = V2list*1000/Resistance #Convert voltage to current in mA in LED
 
-VLEDlist,V2list =[],[]
-for i in range(1024,10): #Measure every tenth value.
-    device.query(f"OUT:CH0 {i}") #set output voltage in Ch. 0
+fig,axes=plt.subplots(1,figsize=(6,6))
 
-    '''We are interested in the voltage drop across the LED:
-    so VLED = V1-V2. The voltage that we measure is a 'binary' number
-    it is converted to volt by *3.3/1023. 
-    The current over the LED can be determined by the voltage drop 
-    (V2) across the resistor (divided by the resistance). 
-    
-    Both voltages are appended to a list: VLEDlist and V2list. '''
-    
-    VLEDlist.append((float(device.query("MEAS:CH1?"))-float(device.query("MEAS:CH2?")))*3.3/1023)
-    V2list.append(float(device.query("MEAS:CH2?"))*3.3/1023)
-    
-weerstand = 220
-Stroomsterkte = V2list/weerstand #Convert voltage to current
+axes.scatter(VLED,Iled,c='black',s=25,fc = 'none',ec='black')
 
-fig,axes=plt.subplots(1,figsize=(6,4))
-axes.scatter(VLEDlist,Stroomsterkte,c='black',s=15)
 axes.set_xlim(0,None)
-axes.set_ylim(0,None)
-axes.set_xlabel(r"$V_{Led}$", fontsize=12)
-axes.set_ylabel(r"$I_{Led}$ ", fontsize=12)
+axes.set_ylim(-0.1,None)
+axes.set_xlabel(r"$V_{Led}$ (Volt)", fontsize=12)
+axes.set_ylabel(r"$I_{Led}$ (A)", fontsize=12)
+
 plt.show()
