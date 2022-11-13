@@ -1,1 +1,1 @@
-from src.pythondaq import view
+import pythondaq.view
