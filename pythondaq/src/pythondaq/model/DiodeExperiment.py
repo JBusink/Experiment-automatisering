@@ -1,4 +1,4 @@
-from controller.arduino_device import ArduinoVISADevice
+from src.pythondaq.controller.arduino_device import ArduinoVISADevice
 import numpy as np
 
 class DiodeExperiment:

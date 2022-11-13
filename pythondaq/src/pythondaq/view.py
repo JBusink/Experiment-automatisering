@@ -1,6 +1,6 @@
 print('test import staement')
-from controller.arduino_device import list_devices, ArduinoVISADevice
-from model.DiodeExperiment import DiodeExperiment
+from src.pythondaq.controller.arduino_device import list_devices, ArduinoVISADevice
+from src.pythondaq.model.DiodeExperiment import DiodeExperiment
 import matplotlib.pyplot as plt
 import numpy as np
 
