@@ -1,9 +1,21 @@
 from arduino_device import list_devices
 from DiodeExperiment import DiodeExperiment
 import matplotlib.pyplot as plt
-import numpy as np
+# import numpy as np
 
-# # Check if ArduinoVisaDevice class works
+# Check if ArduinoVisaDevice class works
+port = list_devices()
+device = ArduinoVISADevice(port = port[2])
+device.set_output_volt(value = 1)
+device.set_output_value(value =0)
+
+#Check if DiodeExperiment class works
+measurement= DiodeExperiment(port=port[2])
+measurement.standby()
+measurement.get_identification()
+measure = measurement.measure_volt(2.3,1,3.2)
+measurement.close()
+
 # port = list_devices()
 # print(port)
 # device = ArduinoVISADevice(port = port[2])
