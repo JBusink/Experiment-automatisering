@@ -7,25 +7,48 @@ class DiodeExperiment:
     _max_voltage = 3.3
     
     def __init__(self,port):
-        
-        self.device=ArduinoVISADevice(port=port)
+        """Open communication of device and prints firmware.
 
+        Args:
+            port (_str_): string of port number.
+        """
+        self.device=ArduinoVISADevice(port=port)
+        print(self.device.get_identification())
         pass
     
     def get_identification(self):
+        """Prints device firmware version.
+        """
         print(self.device.get_identification())
         pass
 
     def standby(self):
-        '''Set zero voltage'''
+        """Standby function, sets 0 voltage on channel 0.
+        """
         self.device.set_output_volt(self._ch_set_diode_voltage, 0)
         pass
     
     def adc_to_volt(self, value):
+        """Adc to volt converter, 0-1023 to 0-3.3 volt.
+
+        Args:
+            value (int): output voltage in adc
+
+        Returns:
+            _type_: output voltage in Volt
+        """
         voltage = value / 1023 * 3.3
         return voltage
     
     def volt_to_adc(self, value):
+        """Inverse of adc_to_ volt function.
+
+        Args:
+            value (float): voltage value.
+
+        Returns:
+            _type_: adc number.
+        """
         adc = int(value *1023/3.3)
         return adc
     
@@ -294,26 +317,6 @@ class DiodeExperiment:
 #         return scan_data
 
 
-
-
-
-
-
-# def search_device(partial_name):
-#     """Search for a device using a partial name.
-
-#     Args:
-#         partial_name (str): the (partial) name to search for.
-
-#     Returns:
-#         A string containing the full device name, or None if no match was found.
-
-#     """
-#     devices = list_devices()
-#     for device in devices:
-#         if partial_name in device:
-#             return device
-#     raise DeviceNotFoundError(f"No device found matching string '{partial_name}'")
 
 
 
