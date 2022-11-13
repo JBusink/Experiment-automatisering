@@ -1,4 +1,4 @@
-from arduino_device import list_devices, ArduinoVISADevice
+from arduino_device import list_devices
 from DiodeExperiment import DiodeExperiment
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,11 +20,11 @@ import numpy as np
 port = list_devices()
 measurement= DiodeExperiment(port=port[2])
 
-measure = measurement.measure_volt(2,1000,3.3)
-fig, axes = plt.subplots()
-n, bins, patches = axes.hist(np.asarray(measure), 50, density=True,histtype='step')
-axes.set_yscale('log')
-plt.show()
+# measure = measurement.measure_volt(2,1000,3.3)
+# fig, axes = plt.subplots()
+# n, bins, patches = axes.hist(np.asarray(measure), 50, density=True,histtype='step')
+# axes.set_yscale('log')
+# plt.show()
 
 Vled,Iled,Iled_err = measurement.scan_value(start = 2,stop = 1000,step=60, N= 10)
 
