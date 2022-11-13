@@ -1,4 +1,6 @@
 import pyvisa
+print('Arduino Device folder')
+
 def list_devices():
     '''Function that returns the ports of the usb.
     '''
