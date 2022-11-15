@@ -38,12 +38,10 @@ def identification():
     
 def histogram():
     measurement= DiodeExperiment(port=port[2])
-    measure = measurement.measure_volt(2,100000,3.3)
+    measure = measurement.measure_volt(2,1000,3.3)
     fig, axes = plt.subplots()
     n, bins, patches = axes.hist(np.asarray(measure), 50, density=True,histtype='step')
     axes.set_ylabel(r'$\mathcal{P}(I)$',fontsize=16)
-    axes.set_ylabel(r'$I (A)$',fontsize=16)
-    # axes.set_yscale('log')
+    axes.set_xlabel(r'$I (A)$',fontsize=16)
+    axes.set_yscale('log')
     plt.show()
-
-

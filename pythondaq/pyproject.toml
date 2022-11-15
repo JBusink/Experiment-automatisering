@@ -20,6 +20,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-view = "src.pythondaq.view:main"
-histogram = "src.pythondaq.view:histogram"
-ID = "src.pythondaq.view:identification"
+view = "src.pythondaq.view.view:main"
+histogram = "src.pythondaq.view.view:histogram"
+ID = "src.pythondaq.view.view:identification"
