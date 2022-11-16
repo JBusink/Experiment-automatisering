@@ -1,29 +1,32 @@
-from pythondaq.controller.arduino_device import list_devices, ArduinoVISADevice
+from pythondaq.controller.arduino_device import list_devices, ArduinoVISADevice,info_devices
 from pythondaq.model.DiodeExperiment import DiodeExperiment
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Check if ArduinoVisaDevice class works
-port = list_devices()
-device = ArduinoVISADevice(port = port[2])
-device.set_output_volt(value = 1)
-device.set_output_value(value =0)
 
 #Check if DiodeExperiment class works
-measurement= DiodeExperiment(port=port[2])
+measurement= DiodeExperiment(port=2)
 measurement.standby()
 measure = measurement.measure_volt(2.3,1,3.2)
 measurement.close()
 
+
 # #Check if DiodeExperiment class works
-measurement= DiodeExperiment(port=port[2])
+measurement= DiodeExperiment(port=2)
 measurement.standby()
 measurement.get_identification()
 measure = measurement.measure_volt(2.3,1,3)
 measurement.close()
 
+
+    #A simple scan 
 def main():
-    measurement= DiodeExperiment(port=port[2])
+    
+    """Input is 
+    """
+    info_devices()
+    device_index = input("Please choose the index of the device to use: ")
+    measurement= DiodeExperiment(port=device_index)
     Vled,Iled,Iled_err = measurement.scan_value(start = 2,stop = 1000,step=60, N= 10)
 
     fig,axes=plt.subplots(1,1,figsize=(5,5))
@@ -33,11 +36,17 @@ def main():
     axes.set_xlabel(r'$V_{led} (V)$',fontsize=14)
     plt.show()
     
-def identification():
-    print(list_devices())
     
+    #print ID of device and found devices.
+def identification():
+    ArduinoVISADevice(port = list_devices()[2]).get_identification()     
+    
+    
+    #histogram at a specific voltage value, to observe distribution of noise.
 def histogram():
-    measurement= DiodeExperiment(port=port[2])
+    info_devices()
+    device_index = input("Please choose the index of the device to use: ")
+    measurement= DiodeExperiment(port=device_index)
     measure = measurement.measure_volt(2,1000,3.3)
     fig, axes = plt.subplots()
     n, bins, patches = axes.hist(np.asarray(measure), 50, density=True,histtype='step')

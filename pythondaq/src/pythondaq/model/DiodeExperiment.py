@@ -1,4 +1,4 @@
-from pythondaq.controller.arduino_device import ArduinoVISADevice
+from pythondaq.controller.arduino_device import ArduinoVISADevice,list_devices
 import numpy as np
 
 class DiodeExperiment:
@@ -7,9 +7,7 @@ class DiodeExperiment:
     _max_voltage = 3.3
     
     def __init__(self,port):
-        
-        self.device=ArduinoVISADevice(port=port)
-
+        self.device = ArduinoVISADevice(port = str(list_devices()[int(port)]))
         pass
     
     def get_identification(self):
