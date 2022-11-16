@@ -27,10 +27,10 @@ def main():
     info_devices()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
-    Vled,Iled,Iled_err = measurement.scan_value(start = 2,stop = 1000,step=60, N= 10)
+    Vled,Iled,Iled_err,Vled_err = measurement.scan_value(start = 2,stop = 1020,step=60, N= 10)
 
     fig,axes=plt.subplots(1,1,figsize=(5,5))
-    axes.errorbar(Vled,Iled,yerr=Iled_err,ms =5,color= 'black',
+    axes.errorbar(Vled,Iled,xerr=Vled_err,yerr=Iled_err,ms =5,color= 'black',
                 mfc='white',mec='black',fmt='.',elinewidth=2,capsize=2)
     axes.set_ylabel(r'$I_{led} (A)$',fontsize=14)
     axes.set_xlabel(r'$V_{led} (V)$',fontsize=14)
