@@ -1,5 +1,5 @@
-from src.pythondaq.controller.arduino_device import list_devices, ArduinoVISADevice
-from src.pythondaq.model.DiodeExperiment import DiodeExperiment
+from pythondaq.controller.arduino_device import list_devices, ArduinoVISADevice
+from pythondaq.model.DiodeExperiment import DiodeExperiment
 import matplotlib.pyplot as plt
 import numpy as np
 

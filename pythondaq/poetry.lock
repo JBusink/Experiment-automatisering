@@ -1,17 +1,4 @@
 [[package]]
-name = "arduino-device"
-version = "1.0.1"
-description = "Interface to arduino devices with auto creation of class methods with arduino commands and auto discovery of available Arduinos in Linux, Windows, and Mac OS X"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-inflection = "*"
-pyserial = "*"
-serial_interface = "*"
-
-[[package]]
 name = "contourpy"
 version = "1.0.6"
 description = "Python library for calculating contours of 2D quadrilateral grids"
@@ -58,14 +45,6 @@ type1 = ["xattr"]
 ufo = ["fs (>=2.2.0,<3)"]
 unicode = ["unicodedata2 (>=14.0.0)"]
 woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
-
-[[package]]
-name = "inflection"
-version = "0.5.1"
-description = "A port of Ruby on Rails inflector to Python"
-category = "main"
-optional = false
-python-versions = ">=3.5"
 
 [[package]]
 name = "kiwisolver"
@@ -188,17 +167,6 @@ serial = ["pyserial (>=3.0)"]
 usb = ["pyusb"]
 
 [[package]]
-name = "serial-interface"
-version = "2.3.0"
-description = "Extends pyserial Serial to add convenience methods."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pyserial = "*"
-
-[[package]]
 name = "setuptools"
 version = "65.5.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -256,12 +224,9 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "cf9f0c5ad5b76516d204a3946ac2c24dba021f4a2ed46e148f319425669626b6"
+content-hash = "b7d7db62fa55e0a0771f25b0167e55e9531b6d1b351d58885bd2236a63ee98d5"
 
 [metadata.files]
-arduino-device = [
-    {file = "arduino_device-1.0.1.tar.gz", hash = "sha256:d262858c5b4c71c521457844d3d86aa35b8fb3fcbb6967b5502cf2f8cf77fb14"},
-]
 contourpy = [
     {file = "contourpy-1.0.6-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:613c665529899b5d9fade7e5d1760111a0b011231277a0d36c49f0d3d6914bd6"},
     {file = "contourpy-1.0.6-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:78ced51807ccb2f45d4ea73aca339756d75d021069604c2fccd05390dc3c28eb"},
@@ -340,10 +305,6 @@ cycler = [
 fonttools = [
     {file = "fonttools-4.38.0-py3-none-any.whl", hash = "sha256:820466f43c8be8c3009aef8b87e785014133508f0de64ec469e4efb643ae54fb"},
     {file = "fonttools-4.38.0.zip", hash = "sha256:2bb244009f9bf3fa100fc3ead6aeb99febe5985fa20afbfbaa2f8946c2fbdaf1"},
-]
-inflection = [
-    {file = "inflection-0.5.1-py2.py3-none-any.whl", hash = "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2"},
-    {file = "inflection-0.5.1.tar.gz", hash = "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417"},
 ]
 kiwisolver = [
     {file = "kiwisolver-1.4.4-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:2f5e60fabb7343a836360c4f0919b8cd0d6dbf08ad2ca6b9cf90bf0c76a3c4f6"},
@@ -574,10 +535,6 @@ pyvisa = [
 pyvisa-py = [
     {file = "PyVISA-py-0.5.3.tar.gz", hash = "sha256:4c80954ce454582169ecfd7117b3df8c3b668bd62073aa6798e92d3d1395f58a"},
     {file = "PyVISA_py-0.5.3-py3-none-any.whl", hash = "sha256:9f876de5945560421424c62b7880f328b59530fac6fbcbe604ae71646632b331"},
-]
-serial-interface = [
-    {file = "serial_interface-2.3.0-py3-none-any.whl", hash = "sha256:d6e1e164e6215c1f7fe8209caa21728342b808dfa4e98ba87ab801f92453c901"},
-    {file = "serial_interface-2.3.0.tar.gz", hash = "sha256:b57b09fb089cc3d1adb8341d0996a99b8fc4b1245bfb294854bf085b46358791"},
 ]
 setuptools = [
     {file = "setuptools-65.5.1-py3-none-any.whl", hash = "sha256:d0b9a8433464d5800cbe05094acf5c6d52a91bfac9b52bcfc4d41382be5d5d31"},
