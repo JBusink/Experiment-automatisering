@@ -4,7 +4,7 @@ import click
 # results in meters of measuring kitchen table
 
 @click.command()
-@click.option("-l","--table_length",default = 1.,help = "Lenght of table", show_default=True,)
+@click.option("-l","--table_length",default = 1,help = "Lenght of table",type=float ,show_default=True,)
 @click.option("-w","--table_width",default = 1.,help = "width of table", show_default=True,)
 @click.option("-we","--table_width_err",default = 0.,help = "error width of table", show_default=True,)
 @click.option("-le","--table_length_err",default = 0.,help = "error length of table", show_default=True,)
