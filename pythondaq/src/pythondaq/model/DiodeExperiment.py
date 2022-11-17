@@ -102,7 +102,7 @@ class DiodeExperiment:
             return (np.mean(VLED_mean,axis=0),np.mean(ILED_mean,axis=0),
                     np.std(ILED_mean,axis=0)/np.sqrt(N),np.std(VLED_mean,axis=0)/np.sqrt(N))
         
-    def scan_volt(self, start,stop,step=11,N=int(1)):
+    def scan_volt(self, start=0,stop=3.3,step=11,N=int(1)):
         """Performs a voltage scan from start to stop value, with steps of step.
         The total number of scans N can be chosen, default = 1.
 
