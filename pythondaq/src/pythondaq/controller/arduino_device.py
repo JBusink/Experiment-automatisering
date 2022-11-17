@@ -115,9 +115,12 @@ def plot_graph(Vled,Iled,Iled_err,Vled_err):
         4 (list): list of measurements. 
     """
     
-    fig,axes=plt.subplots(1,1,figsize=(5,5))
+    fig,axes=plt.subplots(1,1,figsize=(8,4))
     axes.errorbar(Vled,Iled,xerr=Vled_err,yerr=Iled_err,ms =5,color= 'black',
                 mfc='white',mec='black',fmt='.',elinewidth=2,capsize=2)
     axes.set_ylabel(r'$I_{led} (A)$',fontsize=14)
     axes.set_xlabel(r'$V_{led} (V)$',fontsize=14)
+    axes.set_xlim(0,None)
+    axes.set_ylim(0,None)
+    plt.tight_layout()
     plt.show()
