@@ -1,11 +1,6 @@
 import click
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
 from pythondaq.model.DiodeExperiment import DiodeExperiment
-from pythondaq.controller.arduino_device import list_devices, ArduinoVISADevice, info_devices
-
+from pythondaq.controller.arduino_device import *
 
 """A CLI to measure the current-voltage characteristic of a LED.
 In this experiment, a specific circuit schematic is assumed. 
@@ -15,19 +10,24 @@ The voltage across the diode and the resistor are measured and the
 latter is used to calculate the current flowing through the diode.
 """
 
+
 @click.group()
 def cmd_group():
     """A CLI to measure the current-voltage characteristic of a LED.
     """
     pass
 
+
 @cmd_group.command('scan')
 @click.option("-s", "--start", default=0.,type=float, help="Start position of scan in Volt.")
-@click.option("-f", "--finish", default=3.3,type=float, help="End position of scan in Volt (3.3 Volt max.).")
-@click.option("-n", "--number", default=20,type=int, help="Number of scans.")
-@click.option("-i", "--interval", default=2,type=int, help="Number of datapoints.")
-def scan_volt(start,finish,number,interval):
-    print(finish,start,number,interval)
+@click.option("-e", "--end", default=3.3,type=float, help="End position of scan in Volt (3.3 Volt max.).")
+@click.option("-i", "--interval", default=10,type=int, help="Number of datapoints.")
+@click.option("-n", "--number", default=2,type=int, help="Number of scans.")
+@click.option("-g", "--graph/--no-graph",default=False,help="Plot a graph of the current versus the applied voltage.",
+)
+@click.option("-c", "--data/--no-data",default=False,help="Save a csv of the current versus the applied voltage.",
+)
+def scan(start,end,interval,number,graph,data):
     """A scan method (in voltage) that varies the applied voltage and measures the current and Voltage
     of the LED. If the number of scan is larger than 1, it returns the err on the mean of the current 
     and Voltage.
@@ -41,19 +41,21 @@ def scan_volt(start,finish,number,interval):
     info_devices()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
-    Vled,Iled,Iled_err,Vled_err = measurement.scan_volt(start = 2,finish = 1020,interval=60, number= 10)
+    Vled,Iled,Iled_err,Vled_err = measurement.scan_volt(start,end,interval, number)
+    df  = [Vled,Iled,Iled_err,Vled_err]
+    if data:
+        data_to_csv(df)
+    if graph:
+        plot_graph(Vled,Iled,Iled_err,Vled_err)
+    else:
+        return df
 
-    fig,axes=plt.subplots(1,1,figsize=(5,5))
-    axes.errorbar(Vled,Iled,xerr=Vled_err,yerr=Iled_err,ms =5,color= 'black',
-                mfc='white',mec='black',fmt='.',elinewidth=2,capsize=2)
-    axes.set_ylabel(r'$I_{led} (A)$',fontsize=14)
-    axes.set_xlabel(r'$V_{led} (V)$',fontsize=14)
-    plt.show()
 
 @cmd_group.command('list')
 @click.argument("tekst",type=str)
 def list(tekst):
     print(f'hello {tekst}')
+
 
 
 @cmd_group.command('ID')

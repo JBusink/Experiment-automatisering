@@ -1,7 +1,7 @@
 import click
 import numpy as np
-from numpy import pi
 import pandas as pd
+
 
 @click.group()
 def cmd_group():
@@ -16,10 +16,11 @@ def sin(number):
     Args:
         number (int): makes a list from 0 to 2*pi with n number of steps.
     """
-    x = np.linspace(0, 2 * pi, number)
+    x = np.linspace(0, 2 * np.pi, number)
     df = pd.DataFrame({"x": x, "sin (x)": np.sin(x)})
     print(df)
     return
+
 
 @cmd_group.command("tan")
 @click.option("-n","--number",default = 5,help = "Number of samples in linear spacing")
@@ -30,10 +31,11 @@ def tan(number):
     Args:
         number (int): makes a list from 0 to 2*pi with n number of steps.
     """
-    x = np.linspace(0, 2 * pi, number)
+    x = np.linspace(0, 2 * np.pi, number)
     df = pd.DataFrame({"x": x, "tan (x)": np.tan(x)})
     print(df)
     return
+
 
 @cmd_group.command("approx")
 @click.option("-e","--epsilon",default = .01,help = "Define epsilon in which abs(x-sin(x))<= epsilon.")

@@ -270,7 +270,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "5677713645a6d588a324d3d222e3279fd0fd22c67cdd34cae0f4ac9af3192ee6"
+content-hash = "df11d1bcb342f1840e883c1fd97c08aa6104117d396637ef60c65330a78e6b43"
 
 [metadata.files]
 click = [
