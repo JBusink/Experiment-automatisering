@@ -96,15 +96,15 @@ def measure_current(voltage, number,data):
 @cmd_group.command('scan')
 @click.option("-s", "--start", default=0.,type=click.FloatRange(0, 3.3), help="Start position of scan in Volt.")
 @click.option("-e", "--end", default=3.3,type=click.FloatRange(0, 3.3), help="End position of scan in Volt (3.3 Volt max.).")
-@click.option("-s", "--step", default=10,type=int, help="Number of datapoints.")
+@click.option("-i", "--interval", default=10,type=int, help="Number of datapoints.")
 @click.option("-n", "--number", default=2,type=int, help="Number of scans.")
 @click.option("-g", "--graph/--no-graph",default=False,
 help="Plot a graph of the current versus the applied voltage.",)
 @click.option("-d", "--data/--no-data",default=False,show_default = True,
 help="Save a csv of the current versus the applied voltage.",)
-@click.option("-i", "--info/--no-info",default=False,
+@click.option("-h", "--info/--no-info",default=False,
 help="Print device information.",)
-def scan(start,end,step,number,graph,data,info):
+def scan(start,end,interval,number,graph,data,info):
     """A scan method (in voltage) that varies the applied voltage and measures the current and Voltage
     of the LED. If the number of scan is larger than 1, it returns the err on the mean of the current 
     and Voltage.
@@ -119,7 +119,7 @@ def scan(start,end,step,number,graph,data,info):
     info_devices()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
-    Vled,Iled,Iled_err,Vled_err = measurement.scan_volt(start,end,step, number)
+    Vled,Iled,Iled_err,Vled_err = measurement.scan_volt(start,end,interval, number)
     df  = [Vled,Iled,Iled_err,Vled_err]
     if data:
         data_to_csv(df)
