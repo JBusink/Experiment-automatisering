@@ -20,4 +20,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-cli = "pythondaq.view.cli:cmd_group"
+cli = "pythondaq.view.diode_experiment:cmd_group"

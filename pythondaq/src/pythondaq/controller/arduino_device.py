@@ -86,7 +86,7 @@ def data_to_csv(data):
             if filename.endswith(f'measurement_{i}.csv'):
                 i += 1
     df = pd.DataFrame({'Vled(V)':Vled, 'Iled(A)':Iled,'Vled_err':Vled_err,'Iled_err(A)':Iled_err})
-    df.to_csv(f'{path}/measurement_{i}.csv', sep = ',',index=True,index_label='Index') 
+    df.to_csv(f'{path}/scan_{i}.csv', sep = ',',index=True,index_label='Index') 
 
 
 def path_check(path):
@@ -121,6 +121,6 @@ def plot_graph(Vled,Iled,Iled_err,Vled_err):
     axes.set_ylabel(r'$I_{led} (A)$',fontsize=14)
     axes.set_xlabel(r'$V_{led} (V)$',fontsize=14)
     axes.set_xlim(0,None)
-    axes.set_ylim(0,None)
+    axes.set_ylim(-0.001,None)
     plt.tight_layout()
     plt.show()

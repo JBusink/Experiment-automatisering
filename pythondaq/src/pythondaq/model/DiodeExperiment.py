@@ -29,7 +29,6 @@ class DiodeExperiment:
         """Provides the firmware version in the arduino device.
         """
         print(self.device.get_identification())
-        pass
 
     def standby(self):
         """Standby mode, applies 0 voltage.
@@ -160,11 +159,11 @@ class DiodeExperiment:
         """
         if volt > self._max_voltage:
             print('No such thing as V>3.3 volt')
-            pass
+            return
             
         if int(channel)>2 or int(channel)<0:
             print('Good Job, this cannot happen')
-            pass
+            return 
         
         self.device.set_output_volt(0,value = volt)
         Vlist = []
