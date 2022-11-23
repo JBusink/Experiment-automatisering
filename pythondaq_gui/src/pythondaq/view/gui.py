@@ -22,13 +22,16 @@ class UserInterface(QtWidgets.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.functions_str = ['sin(x)', 'cos(x)', "x^2"]
+        self.ui.Qcombo_button.addItems(self.functions_str)
 
         self.ui.clear_button.clicked.connect(self.clear_plot)
         self.ui.plot_button.clicked.connect(self.update_plot)
         self.ui.scan_button.clicked.connect(self.scan_function_update)
         self.ui.fit_button.clicked.connect(self.fit)
 
-        
+        self.ui.Qcombo_button.activated.connect(self.activated)
+
         # self.ui.Start.valueChanged.connect(self.scan_function_update)
         # self.ui.end.valueChanged.connect(self.scan_function_update)
         # self.ui.steps.valueChanged.connect(self.scan_function_update)
@@ -38,7 +41,20 @@ class UserInterface(QtWidgets.QMainWindow):
         # self.plot(self.U,self.I,self.dU,self.dI)
 
         self.show()
+    @Slot()
+    def activated(self, index):
+        x = np.linspace(0,10,111)
+        self.ui.plot_widget.clear()
 
+        if self.functions_str[index] == 'sin(x)':
+            self.ui.plot_widget.clear()
+            self.ui.plot_widget.plot(x, np.sin(x), symbol='o', symbolSize = 5, pen={'color': 'black', 'width': 4})
+        if self.functions_str[index] == 'cos(x)':
+            self.ui.plot_widget.clear()
+            self.ui.plot_widget.plot(x, np.cos(x), symbol='o', symbolSize = 5, pen={'color': 'black', 'width': 4})
+        if self.functions_str[index] == 'x^2':
+            self.ui.plot_widget.clear()
+            self.ui.plot_widget.plot(x, x**2, symbol='o', symbolSize = 5, pen={'color': 'black', 'width': 4})
 
 
 
@@ -60,7 +76,7 @@ class UserInterface(QtWidgets.QMainWindow):
 
     @Slot()
     def plot(self,U,I,dU,dI):
-        print(I[-1],dI[-1])
+        # print(I[-1],dI[-1])
         # error = pg.ErrorBarItem(x=U, y=I, height=dI,width = dU, beam=.00001)
         # self.ui.plot_widget.addItem(error)
         self.ui.plot_widget.plot(U, I, symbol='o', name = "I-U LED",symbolSize = 5, pen={'color': 'black', 'width': 4})
@@ -84,12 +100,17 @@ class UserInterface(QtWidgets.QMainWindow):
 
     @Slot()
     def fit(self):
+        self.ui.fit_text.clear()
         def model(x,a,b,c,d):
             return a*(np.exp(b*x)-c)+d
 
-        popt,pcov = curve_fit(model,self.U,self.I,p0=[0,1,2,0.1])
-        self.ui.plot_widget.plot(self.U,model(self.U,*popt),symbolSize = 2, pen={'color': 'darkred', 'width': 4})
-        self.ui.fit_text.append('xgf')
+        popt,pcov = curve_fit(model,self.U,self.I,p0=[0.000001,10,2,-0.001],maxfev = 10000)
+        if type(popt) != type(list):
+            self.ui.fit_text.append("Fit not converged!")
+        else:
+            self.ui.plot_widget.plot(self.U,model(self.U,*popt),symbolSize = 2, pen={'color': 'darkred', 'width': 4})
+            for i in range(len(popt)):
+                self.ui.fit_text.append(f"P_{i}= {popt[i]} +- {9}\n")
 
 
 

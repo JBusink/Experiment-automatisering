@@ -16,7 +16,7 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDateTimeEdit, QDoubleSpinBox, QLabel,
+from PySide6.QtWidgets import (QApplication, QDateTimeEdit, QDoubleSpinBox, QLabel,QComboBox,
     QMainWindow, QMenu, QMenuBar, QProgressBar,
     QPushButton, QRadioButton, QSizePolicy, QSpinBox,
     QSplitter, QStatusBar, QTextBrowser, QWidget)
@@ -39,23 +39,33 @@ class Ui_MainWindow(object):
         self.fit_text = QTextBrowser(self.centralwidget)
         self.fit_text.setObjectName(u"fit_text")
         self.fit_text.setGeometry(QRect(270, 440, 431, 91))
+
+        self.Qcombo_button = QComboBox(self.centralwidget)
+        self.Qcombo_button.setObjectName(u"ChooseFunction")
+        self.Qcombo_button.setGeometry(QRect(520, 490, 100, 20))
+
         self.fit_button = QRadioButton(self.centralwidget)
         self.fit_button.setObjectName(u"fit_button")
         self.fit_button.setGeometry(QRect(720, 440, 100, 20))
+
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setGeometry(QRect(20, 440, 121, 96))
         self.splitter.setOrientation(Qt.Vertical)
+
         self.scans = QSpinBox(self.splitter)
         self.scans.setObjectName(u"scans")
         self.scans.setMinimum(1)
         self.scans.setMaximum(999)
         self.scans.setValue(2)
         self.splitter.addWidget(self.scans)
+
         self.steps = QSpinBox(self.splitter)
         self.steps.setObjectName(u"steps")
         self.steps.setMinimum(1)
         self.steps.setValue(50)
+        self.steps.setMaximum(1024)
+
         self.splitter.addWidget(self.steps)
         self.Start = QDoubleSpinBox(self.splitter)
         self.Start.setObjectName(u"Start")
