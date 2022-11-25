@@ -95,7 +95,7 @@ class DiodeExperiment:
                     
                 VLED = self.adc_to_volt(np.asarray(V1list)-np.asarray(V2list))
                 ILED = self.adc_to_volt(np.asarray(V2list))*1000/self._resistor_value
-                ILED_mean.append(ILED)
+                ILED_mean.append(ILED*1000)
                 VLED_mean.append(VLED)
             self.standby()
             return (np.mean(VLED_mean,axis=0),np.mean(ILED_mean,axis=0),
@@ -138,7 +138,7 @@ class DiodeExperiment:
                     V2list.append(self.adc_to_volt(self.device.get_input_value(channel = 2)))
                     
                 VLED = np.asarray(V1list)-np.asarray(V2list)
-                ILED = np.asarray(V2list)/self._resistor_value
+                ILED = np.asarray(V2list)*1000/self._resistor_value
                 ILED_mean.append(ILED)
                 VLED_mean.append(VLED)
             self.standby()
