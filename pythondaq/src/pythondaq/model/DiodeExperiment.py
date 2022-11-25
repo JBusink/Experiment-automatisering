@@ -1,4 +1,4 @@
-from pythondaq.controller.arduino_device import ArduinoVISADevice,list_devices
+from pythondaq.controller.arduino_device import ArduinoVISADevice,list_devices,info_devices
 import numpy as np
 
 class DiodeExperiment:
@@ -94,12 +94,12 @@ class DiodeExperiment:
                     V2list.append(self.device.get_input_value(channel = 2))
                     
                 VLED = self.adc_to_volt(np.asarray(V1list)-np.asarray(V2list))
-                ILED = self.adc_to_volt(np.asarray(V2list))/self._resistor_value
-                ILED_mean.append(ILED)
+                ILED = self.adc_to_volt(np.asarray(V2list))*1000/self._resistor_value
+                ILED_mean.append(ILED*1000)
                 VLED_mean.append(VLED)
             self.standby()
             return (np.mean(VLED_mean,axis=0),np.mean(ILED_mean,axis=0),
-                    np.std(ILED_mean,axis=0)/np.sqrt(N),np.std(VLED_mean,axis=0)/np.sqrt(N))
+                    np.std(VLED_mean,axis=0)/np.sqrt(N),np.std(ILED_mean,axis=0)/np.sqrt(N))
         
     def scan_volt(self, start=0,stop=3.3,step=11,N=int(1)):
         """Performs a voltage scan from start to stop value, with steps of step.
@@ -138,12 +138,11 @@ class DiodeExperiment:
                     V2list.append(self.adc_to_volt(self.device.get_input_value(channel = 2)))
                     
                 VLED = np.asarray(V1list)-np.asarray(V2list)
-                ILED = np.asarray(V2list)/self._resistor_value
+                ILED = np.asarray(V2list)*1000/self._resistor_value
                 ILED_mean.append(ILED)
                 VLED_mean.append(VLED)
             self.standby()
-            return (np.mean(VLED_mean,axis=0),np.mean(ILED_mean,axis=0),
-                    np.std(ILED_mean,axis=0)/np.sqrt(N),np.std(VLED_mean,axis=0)/np.sqrt(N))
+            return np.around(np.mean(VLED_mean,axis=0),4),np.around(np.mean(ILED_mean,axis=0),4),np.around(np.std(VLED_mean,axis=0)/np.sqrt(N),4),np.around(np.std(ILED_mean,axis=0)/np.sqrt(N),4)
     
     def measure_volt(self,channel,N,volt):
         """Measures voltage of specific channel N times, with input voltage Volt.
@@ -202,3 +201,9 @@ class DiodeExperiment:
         """
         self.standby()
         del self.device
+
+def devices_list():
+    return list_devices()
+
+def devices_info():
+    return info_devices()
