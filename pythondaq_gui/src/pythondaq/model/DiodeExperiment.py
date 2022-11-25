@@ -1,4 +1,4 @@
-from pythondaq.controller.arduino_device import ArduinoVISADevice,list_devices
+from pythondaq.controller.arduino_device import ArduinoVISADevice,list_devices,info_devices
 import numpy as np
 
 class DiodeExperiment:
@@ -202,3 +202,9 @@ class DiodeExperiment:
         """
         self.standby()
         del self.device
+
+def devices_list():
+    list_devices()
+
+def devices_info():
+    info_devices()

@@ -1,15 +1,12 @@
 import click
-from pythondaq.model.DiodeExperiment import DiodeExperiment
-from pythondaq.controller.arduino_device import *
+from pythondaq.model.DiodeExperiment import DiodeExperiment, devices_list,devices_info
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+from rich.console import Console
 
-"""A CLI to measure the current-voltage characteristic of a LED.
-In this experiment, a specific circuit schematic is assumed. 
-The circuit contains a diode (e.g. a LED) and a resistor in series. 
-A voltage is applied to the high side of the diode and the low side of the resistor is grounded. 
-The voltage across the diode and the resistor are measured and the 
-latter is used to calculate the current flowing through the diode.
-"""
-
+# Console object with which the interface can be decorated
+console =Console()
 
 @click.group()
 def cmd_group():
@@ -23,7 +20,7 @@ def cmd_group():
     "-n", "--number", default = 1, type = int, show_default = True, required = True,
      help="Number of measurements.")
 @click.option(
-    "-v", "--voltage",default = 0, type = float, show_default = True, required = True,
+    "-v", "--voltage",default = 0, type = click.FloatRange(0,3.3), show_default = True, required = True,
      help="Voltage to apply to the diode.")
 @click.option("-c", "--channel", default = 1, type = int, show_default = True, required = True,
  help = "Channel number: 1 or 2." )
@@ -38,7 +35,7 @@ def measure_voltage(voltage, number,channel,data):
         channel (int): the channel number of the device (1 or 2).
     """
 
-    info_devices()
+    devices_info()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
 
@@ -60,7 +57,7 @@ def measure_voltage(voltage, number,channel,data):
 @click.option(
     "-n", "--number", default = 1, type = int, show_default = True, required = True, help="Number of measurements.")
 @click.option(
-    "-v", "--voltage",default = 0, type=float, show_default = True, required=True, help="Voltage to apply to the diode.")
+    "-v", "--voltage",default = 0, type=click.FloatRange(0,3.3), show_default = True, required=True, help="Voltage to apply to the diode.")
 @click.option("-d", "--data/--no-data",default=False,show_default = True,
 help="Save a csv of the current versus the applied voltage.")
 def measure_current(voltage, number,data):
@@ -72,7 +69,7 @@ def measure_current(voltage, number,data):
         voltage (float): the applied voltage to Ch. 0.
         number (int): the number of measurements.
     """
-    info_devices()
+    devices_info()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
 
@@ -87,10 +84,6 @@ def measure_current(voltage, number,data):
                 if filename.endswith(f'measurement_{i}.csv'):
                     i += 1
         df.to_csv(f'{path}/Iled_Vinp{voltage}_{i}.csv', sep = ',',index=True,index_label='Index') 
-
-        
-
-    
 
 
 @cmd_group.command('scan')
@@ -116,20 +109,20 @@ def scan(start,end,interval,number,graph,data,info):
         Interval (int): The total number of datapoint, default = 20.`
     """
 
-    info_devices()
+    devices_info()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
-    Vled,Iled,Iled_err,Vled_err = measurement.scan_volt(start,end,interval, number)
+    data_print = measurement.scan_volt(start,end,interval, number)
+    Vled,Iled,Iled_err,Vled_err = data
     df  = [Vled,Iled,Iled_err,Vled_err]
+    print_data(data_print)
+
     if data:
         data_to_csv(df)
     if graph:
         plot_graph(Vled,Iled,Iled_err,Vled_err)
     if info:
         print(measurement.get_identification())
-    else:
-        return df
-
 
 
 @cmd_group.command('list')
@@ -137,8 +130,80 @@ def list():
     """Shows the available devices and the current version of the
     firmware of the device.
     """
-    info_devices()
+    devices_list()    
+
+
+##Extra functions
+def print_data(measurements):
+    """Prints measurements (Us, U, I, err_U, err_I).\f
+
+    Prints applied voltage, measured voltage and current and calculated uncertainties on
+    voltage values and current values. "nan" if uncertainties are undefined.
+
+    Args:
+        measurements (tuple): (Us, U, I, err_U, err_I)
+            applied voltages + measured voltages, currents + calculated uncertainties 
+    """
+    # print measurements
+    console.print("U [V] \t\t I \[mA] \t err_U [V] \t err_I \[mA]",  style='bold underline red on black')
+    for (U, I, err_U, err_I) in measurements:
+        console.print(f"{U}\t\t{I}\t\t{err_U}\t\t{err_I}", style="red")
+
+
+def data_to_csv(data):
+    Vled,Iled,Iled_err,Vled_err = data
+    """Saves data to csv file. Creates csv file at new folder data/measurement_index.csv.
+    Index is checked and counts up if pre-excisting.
+
+    Args:
+        data list : list of data.
+    """
+    path = 'data'
+    if path_check(path):
+        i = 0
+        for filename in os.listdir(path):
+            if filename.endswith(f'measurement_{i}.csv'):
+                i += 1
+    df = pd.DataFrame({'Vled(V)':Vled, 'Iled(A)':Iled,'Vled_err':Vled_err,'Iled_err(A)':Iled_err})
+    df.to_csv(f'{path}/scan_{i}.csv', sep = ',',index=True,index_label='Index') 
+
+
+def path_check(path):
+    """Check if path excist, if not create folder.
+
+    Args:
+        path (str): location of the path.
+
+    Returns:
+        Boolean: True of False.
+    """
+    if not os.path.exists(path):
+        try:
+            os.makedirs(path)
+        except:
+            print("Not allowed to write in this path, please change the permissions or run the program through a different path")
+            return False
+    return True
+
+def plot_graph(Vled,Iled,Iled_err,Vled_err):
+    """Plot a graph of the measurements.
+
+    Plots a graph of the current versus the applied voltage.
+
+    Args:
+        4 (list): list of measurements. 
+    """
     
+    fig,axes=plt.subplots(1,1,figsize=(8,4))
+    axes.errorbar(Vled,Iled,xerr=Vled_err,yerr=Iled_err,ms =5,color= 'black',
+                mfc='white',mec='black',fmt='.',elinewidth=2,capsize=2)
+    axes.set_ylabel(r'$I_{led} (A)$',fontsize=14)
+    axes.set_xlabel(r'$V_{led} (V)$',fontsize=14)
+    axes.set_xlim(0,None)
+    axes.set_ylim(-0.001,None)
+    plt.tight_layout()
+    plt.show()
+
 
 
 if __name__ == "__main__":
