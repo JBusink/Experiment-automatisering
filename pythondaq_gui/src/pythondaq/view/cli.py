@@ -95,9 +95,7 @@ def measure_current(voltage, number,data):
 help="Plot a graph of the current versus the applied voltage.",)
 @click.option("-d", "--data/--no-data",default=False,show_default = True,
 help="Save a csv of the current versus the applied voltage.",)
-@click.option("-h", "--info/--no-info",default=False,
-help="Print device information.",)
-def scan(start,end,interval,number,graph,data,info):
+def scan(start,end,interval,number,graph,data):
     """A scan method (in voltage) that varies the applied voltage and measures the current and Voltage
     of the LED. If the number of scan is larger than 1, it returns the err on the mean of the current 
     and Voltage.
@@ -112,17 +110,14 @@ def scan(start,end,interval,number,graph,data,info):
     devices_info()
     device_index = input("Please choose the index of the device to use: ")
     measurement= DiodeExperiment(port=device_index)
-    data_print = measurement.scan_volt(start,end,interval, number)
-    Vled,Iled,Iled_err,Vled_err = data
+    Vled,Iled,Vled_err,Iled_err = measurement.scan_volt(start,end,interval, number)
     df  = [Vled,Iled,Iled_err,Vled_err]
-    print_data(data_print)
 
+    print_data(Vled,Iled,Iled_err,Vled_err)
     if data:
         data_to_csv(df)
     if graph:
         plot_graph(Vled,Iled,Iled_err,Vled_err)
-    if info:
-        print(measurement.get_identification())
 
 
 @cmd_group.command('list')
@@ -130,24 +125,30 @@ def list():
     """Shows the available devices and the current version of the
     firmware of the device.
     """
-    devices_list()    
+    print(devices_list()) 
+
+@cmd_group.command('info')
+def info():
+    """Shows the available devices and the current version of the
+    firmware of the device.
+    """
+    devices_info() 
 
 
 ##Extra functions
-def print_data(measurements):
-    """Prints measurements (Us, U, I, err_U, err_I).\f
-
-    Prints applied voltage, measured voltage and current and calculated uncertainties on
-    voltage values and current values. "nan" if uncertainties are undefined.
+def print_data(U,I,err_U,err_I):
+    """Prints U,I, dU, dI in rich console.
 
     Args:
-        measurements (tuple): (Us, U, I, err_U, err_I)
-            applied voltages + measured voltages, currents + calculated uncertainties 
+        U (float): Voltage in volt.
+        I (float): current in ampere.
+        err_U (float): error on Voltage in volt.
+        err_I (float): error on Current in ampere.
     """
-    # print measurements
-    console.print("U [V] \t\t I \[mA] \t err_U [V] \t err_I \[mA]",  style='bold underline red on black')
-    for (U, I, err_U, err_I) in measurements:
-        console.print(f"{U}\t\t{I}\t\t{err_U}\t\t{err_I}", style="red")
+    console.print("U [V] \t\t I \[mA] \t err_U [V] \t err_I \[mA]",  style='bold underline white on black')
+    for i,j,k,l in zip(U,I,err_U,err_I):
+        console.print(f"{i}\t\t{j}\t\t{k}\t\t{l}",style = 'white bold on black')
+
 
 
 def data_to_csv(data):

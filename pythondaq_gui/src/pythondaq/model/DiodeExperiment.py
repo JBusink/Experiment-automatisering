@@ -142,8 +142,7 @@ class DiodeExperiment:
                 ILED_mean.append(ILED)
                 VLED_mean.append(VLED)
             self.standby()
-            return (np.mean(VLED_mean,axis=0),np.mean(ILED_mean,axis=0),
-                    np.std(ILED_mean,axis=0)/np.sqrt(N),np.std(VLED_mean,axis=0)/np.sqrt(N))
+            return np.around(np.mean(VLED_mean,axis=0),4),np.around(np.mean(ILED_mean,axis=0),4),np.around(np.std(VLED_mean,axis=0)/np.sqrt(N),4),np.around(np.std(ILED_mean,axis=0)/np.sqrt(N),4)
     
     def measure_volt(self,channel,N,volt):
         """Measures voltage of specific channel N times, with input voltage Volt.
@@ -204,7 +203,7 @@ class DiodeExperiment:
         del self.device
 
 def devices_list():
-    list_devices()
+    return list_devices()
 
 def devices_info():
-    info_devices()
+    return info_devices()
