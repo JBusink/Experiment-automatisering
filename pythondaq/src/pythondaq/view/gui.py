@@ -9,11 +9,13 @@ latter is used to calculate the current flowing through the diode.
 from Design_27Nov import Ui_MainWindow
 from scipy.optimize import curve_fit
 import sys
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtCore
 import numpy as np
 import pyqtgraph as pg
 import pandas as pd
 from pythondaq.model.DiodeExperiment import DiodeExperiment,devices_list
+# from PyQt6 import QtCore, QtWidgets
+
 
 pg.setConfigOption("background", "w")
 pg.setConfigOption("foreground", "k")
@@ -59,6 +61,10 @@ class UserInterface(QtWidgets.QMainWindow):
         saveAction.setShortcut("Ctrl+S")
         saveAction.triggered.connect(self.save)
 
+
+        #Time
+        self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.currentDateTime())
+
         self.show()
 
     def activated(self):
@@ -96,7 +102,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.Plot_widget.clear()
         self.ui.Histogram.clear()
         self.ui.Residuals.clear()
-        
+
     def plot_histogram(self,I):
         """Plots histogram of y-data using 20 bins, flipped.
 
