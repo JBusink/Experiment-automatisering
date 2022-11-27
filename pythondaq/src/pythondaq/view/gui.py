@@ -29,10 +29,16 @@ class UserInterface(QtWidgets.QMainWindow):
         
         """
         super().__init__()
-
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+
+
+
+        self.U = np.array([0,1,3,4])
+        self.I = np.array([0,1,2,3])
+        self.dU = np.array([0.1,0.1,0.1,0.1])
+        self.dI = np.array([0.1,0.1,0.1,0.1])
         #Choose devicce
         self.ports = devices_list()
         self.ports_dict = generate_dict(self.ports)
@@ -51,7 +57,6 @@ class UserInterface(QtWidgets.QMainWindow):
         fileMenu = self.menuBar().addMenu('File')
         saveAction = fileMenu.addAction('Save data')
         saveAction.setShortcut("Ctrl+S")
-
         saveAction.triggered.connect(self.save)
 
         self.show()
@@ -59,7 +64,7 @@ class UserInterface(QtWidgets.QMainWindow):
     def activated(self):
         """Function that initializes the port devices
         """
-        port = self.ports_dict[self.ui.Qcombo_button.currentText()]
+        port = self.ports_dict[self.ui.Device.currentText()]
         self.device = DiodeExperiment(port=2) #need to change this to take the port again.
 
     def save(self):
@@ -72,7 +77,10 @@ class UserInterface(QtWidgets.QMainWindow):
         """Clears the plot and updates it if a new scan is initialized.
         """
 
-        self.ui.plot_widget.clear()
+        self.ui.Plot_widget.clear()
+        self.ui.Histogram.clear()
+        self.ui.Residuals.clear()
+
         self.plot_main(self.U,self.I,self.dU,self.dI)
         self.plot_histogram(self.I)
 
@@ -85,8 +93,10 @@ class UserInterface(QtWidgets.QMainWindow):
         """Clears plot button.
         """
 
-        self.ui.plot_widget.clear()
-
+        self.ui.Plot_widget.clear()
+        self.ui.Histogram.clear()
+        self.ui.Residuals.clear()
+        
     def plot_histogram(self,I):
         """Plots histogram of y-data using 20 bins, flipped.
 
@@ -94,8 +104,10 @@ class UserInterface(QtWidgets.QMainWindow):
             I (np.array): array of y data (current).
         """
 
-        a,b = np.hist(I,bins=20)
-        self.ui.Histogram.plot(0.5*(b[1:]+b[:-1]),a)
+        a,b = np.histogram(I,bins=20)
+        self.ui.Histogram.plot(a,0.5*(b[1:]+b[:-1]), pen={'color': 'black', 'width': 4})
+        self.ui.Histogram.setLabel("left","I (mA)")
+        self.ui.Histogram.setLabel("top","P(I)")
 
     def plot_residuals(self,U,I,dU,dI,popt):
         """Plots the residuals based on a predescribed model.
@@ -110,14 +122,13 @@ class UserInterface(QtWidgets.QMainWindow):
         def model(x,a,b,c):
             return a*(np.exp(b*x)-c)
 
-        error = pg.ErrorBarItem(x=U, y=(I-model(U,*popt)), height=2*dI,width = 2*dU)
-        self.ui.plot_widget.addItem(error)
-        self.ui.plot_widget.plot(U, (I-model(U,*popt)), symbol='o', name = "I-U LED",symbolSize = 5, pen={'color': 'black', 'width': 4})
+        error = pg.ErrorBarItem(x=np.asarray(U), y=(np.asarray(I)-model(U,*popt)), height=2*dI,width = 2*dU)
+        self.ui.Residuals.addItem(error)
+        self.ui.Residuals.plot(U, (I-model(U,*popt)), symbol='o', name = "I-U LED",symbolSize = 5, pen={'color': 'black', 'width': 4})
 
-        self.ui.plot_widget.addLegend([0,2])
-        self.ui.plot_widget.showGrid(x=True, y=True)
-        self.ui.plot_widget.setLabel("left","I (mA)")
-        self.ui.plot_widget.setLabel("bottom","U (Volt)")
+        self.ui.Residuals.addLegend([0,2])
+        self.ui.Residuals.showGrid(x=True, y=True)
+        self.ui.Residuals.setLabel("left","r (mA)")
 
         
     def plot_main(self,U,I,dU,dI):
@@ -133,13 +144,13 @@ class UserInterface(QtWidgets.QMainWindow):
         """
 
         error = pg.ErrorBarItem(x=U, y=I, height=2*dI,width = 2*dU)
-        self.ui.plot_widget.addItem(error)
-        self.ui.plot_widget.plot(U, I, symbol='o', name = "I-U LED",symbolSize = 5, pen={'color': 'black', 'width': 4})
+        self.ui.Plot_widget.addItem(error)
+        self.ui.Plot_widget.plot(U, I, symbol='o', name = "I-U LED",symbolSize = 5, pen={'color': 'black', 'width': 4})
 
-        self.ui.plot_widget.addLegend([0,2])
-        self.ui.plot_widget.showGrid(x=True, y=True)
-        self.ui.plot_widget.setLabel("left","I (mA)")
-        self.ui.plot_widget.setLabel("bottom","U (Volt)")
+        self.ui.Plot_widget.addLegend([0,2])
+        self.ui.Plot_widget.showGrid(x=True, y=True)
+        self.ui.Plot_widget.setLabel("left","I (mA)")
+        self.ui.Plot_widget.setLabel("bottom","U (Volt)")
 
     def scan_function(self):
         """Scan function that initializes the devices and performs a voltage-scan on the 
@@ -178,7 +189,9 @@ class UserInterface(QtWidgets.QMainWindow):
         if len(self.popt) == 0:
             self.ui.fit_text.append("Fit not converged!")
         else:
-            self.ui.plot_widget.plot(self.U,model(self.U,*self.popt),symbolSize = 2, pen={'color': 'darkred', 'width': 4})
+            self.ui.Plot_widget.plot(self.U,model(self.U,*self.popt),symbolSize = 2, pen={'color': 'darkred', 'width': 4})
+            self.plot_residuals(self.U,self.I,self.dU,self.dI,self.popt)
+            
             for i in range(len(self.popt)):
                 self.ui.fit_text.append("P{}= {:.2e} +- {:.2e}".format(i,self.popt[i],pcov[i][i]**0.5))
 
