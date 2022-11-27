@@ -40,9 +40,9 @@ class Ui_MainWindow(object):
         self.fit_text.setObjectName(u"fit_text")
         self.fit_text.setGeometry(QRect(270, 440, 431, 91))
 
-        # self.Qcombo_button = QComboBox(self.centralwidget)
-        # self.Qcombo_button.setObjectName(u"ChooseFunction")
-        # self.Qcombo_button.setGeometry(QRect(620, 420, 100, 20))
+        self.Qcombo_button = QComboBox(self.centralwidget)
+        self.Qcombo_button.setObjectName(u"ChooseFunction")
+        self.Qcombo_button.setGeometry(QRect(620, 420, 100, 20))
 
         self.fit_button = QRadioButton(self.centralwidget)
         self.fit_button.setObjectName(u"fit_button")

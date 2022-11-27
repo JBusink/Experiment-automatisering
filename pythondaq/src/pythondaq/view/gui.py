@@ -6,13 +6,14 @@ The voltage across the diode and the resistor are measured and the
 latter is used to calculate the current flowing through the diode.
 """
 
-from ui_scan_design_V22Nov import Ui_MainWindow
+from Design_27Nov import Ui_MainWindow
 from scipy.optimize import curve_fit
 import sys
 from PySide6 import QtWidgets
 import numpy as np
 import pyqtgraph as pg
-from pythondaq.model.DiodeExperiment import DiodeExperiment
+import pandas as pd
+from pythondaq.model.DiodeExperiment import DiodeExperiment,devices_list
 
 pg.setConfigOption("background", "w")
 pg.setConfigOption("foreground", "k")
@@ -28,59 +29,107 @@ class UserInterface(QtWidgets.QMainWindow):
         
         """
         super().__init__()
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # self.functions_dict = {"":"","sin(x)": np.sin, "cos(x)": np.cos, "x": lambda x: x}
-        # self.ui.Qcombo_button.addItems(self.functions_dict.keys())
-        # self.ui.Qcombo_button.activated.connect(self.activated)
+        #Choose devicce
+        self.ports = devices_list()
+        self.ports_dict = generate_dict(self.ports)
+        self.ui.Device.addItems(self.ports_dict.values())
+        self.ui.Device.activated.connect(self.activated)
 
 
+        #Connect buttons
         self.ui.clear_button.clicked.connect(self.clear_plot)
         self.ui.plot_button.clicked.connect(self.update_plot)
         self.ui.scan_button.clicked.connect(self.scan_function)
         self.ui.fit_button.clicked.connect(self.fit)
 
-        # self.ui.Start.valueChanged.connect(self.activated)
-        # self.ui.end.valueChanged.connect(self.activated)
-        # self.ui.steps.valueChanged.connect(self.activated)
+
+        #Save data
+        fileMenu = self.menuBar().addMenu('File')
+        saveAction = fileMenu.addAction('Save data')
+        saveAction.setShortcut("Ctrl+S")
+
+        saveAction.triggered.connect(self.save)
 
         self.show()
 
-    # @Slot()
-    # def activated(self):
-    #     """Test button that plots predefined function (in a dictionary). Will be removed in the near future.
-    #     """
+    def activated(self):
+        """Function that initializes the port devices
+        """
+        port = self.ports_dict[self.ui.Qcombo_button.currentText()]
+        self.device = DiodeExperiment(port=2) #need to change this to take the port again.
 
-    #     self.ui.plot_widget.clear()
-    #     function = self.functions_dict[self.ui.Qcombo_button.currentText()]
-    #     x = np.linspace(self.ui.Start.value(), self.ui.end.value(), self.ui.steps.value())
-    #     self.ui.plot_widget.plot(x, function(x), symbol='o', symbolSize = 5, pen={'color': 'black', 'width': 4})
-    #     self.ui.plot_widget.setLabel('left', '<math>x<sup>2</sup></math>', **{'font-size':'16pt'})
-    #     self.ui.plot_widget.setLabel("bottom","x", **{'font-size':'16pt'})
+    def save(self):
+        """Saves the data to .csv file"""
+
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(filter="CSV files (*.csv)")
+        save_csv(self.data,filename)
 
     def update_plot(self):
         """Clears the plot and updates it if a new scan is initialized.
         """
 
         self.ui.plot_widget.clear()
-        self.plot(self.U,self.I,self.dU,self.dI)
+        self.plot_main(self.U,self.I,self.dU,self.dI)
+        self.plot_histogram(self.I)
+
+        if len(self.popt) != 0:
+            self.plot_residuals(self.U,self.I,self.dU,self.dI,self.popt)
+        else: 
+            pass
 
     def clear_plot(self):
         """Clears plot button.
         """
+
         self.ui.plot_widget.clear()
+
+    def plot_histogram(self,I):
+        """Plots histogram of y-data using 20 bins, flipped.
+
+        Args:
+            I (np.array): array of y data (current).
+        """
+
+        a,b = np.hist(I,bins=20)
+        self.ui.Histogram.plot(0.5*(b[1:]+b[:-1]),a)
+
+    def plot_residuals(self,U,I,dU,dI,popt):
+        """Plots the residuals based on a predescribed model.
+
+        Args:
+            U (array): Voltage drop across LED.
+            I (array): current throug LED.
+            dU (array): error on U.
+            dI (array): error on I.
+        """
+
+        def model(x,a,b,c):
+            return a*(np.exp(b*x)-c)
+
+        error = pg.ErrorBarItem(x=U, y=(I-model(U,*popt)), height=2*dI,width = 2*dU)
+        self.ui.plot_widget.addItem(error)
+        self.ui.plot_widget.plot(U, (I-model(U,*popt)), symbol='o', name = "I-U LED",symbolSize = 5, pen={'color': 'black', 'width': 4})
+
+        self.ui.plot_widget.addLegend([0,2])
+        self.ui.plot_widget.showGrid(x=True, y=True)
+        self.ui.plot_widget.setLabel("left","I (mA)")
+        self.ui.plot_widget.setLabel("bottom","U (Volt)")
+
         
-    def plot(self,U,I,dU,dI):
+    def plot_main(self,U,I,dU,dI):
         """Plots the captured data from the diode-experiment.
         The scan method provides the voltage-drop, current in plus the corresponding standard deviations of the mean 
         of a blue LED. Here we plot these quantities.
 
         Args:
-            U (float): Voltage drop across LED.
-            I (float): current throug LED.
-            dU (float): error on U.
-            dI (float): error on I.
+            U (array): Voltage drop across LED.
+            I (array): current throug LED.
+            dU (array): error on U.
+            dI (array): error on I.
         """
 
         error = pg.ErrorBarItem(x=U, y=I, height=2*dI,width = 2*dU)
@@ -102,8 +151,9 @@ class UserInterface(QtWidgets.QMainWindow):
             step (int): number of steps in a linear space between the start and stop value.
             scans (int): number of scans.
         """
-        measurement = DiodeExperiment(port=2)
-        self.U,self.I,self.dU,self.dI = measurement.scan_volt(self.ui.Start.value(),self.ui.end.value(),self.ui.steps.value(),self.ui.scans.value())
+
+        # measurement = DiodeExperiment(port=2)
+        self.U,self.I,self.dU,self.dI = self.device.scan_volt(self.ui.Start.value(),self.ui.end.value(),self.ui.steps.value(),self.ui.scans.value())
 
     def fit(self):
         """Apply a fit function to the data. The data consists of two lists of voltages and currents of the Led. 
@@ -118,19 +168,19 @@ class UserInterface(QtWidgets.QMainWindow):
             popt (float): optimized parameters of a,b,c;
             pcov (float): covariance matrix of a,b,c.
         """
+
         self.ui.fit_text.clear()
         def model(x,a,b,c):
             return a*(np.exp(b*x)-c)
 
         p0=[1e-10,10,1e6]
-        popt,pcov = curve_fit(model,self.U,self.I,p0=p0,maxfev = 10000)
-        print(popt,pcov)
-        if len(popt) == 0:
+        self.popt,pcov = curve_fit(model,self.U,self.I,p0=p0,maxfev = 10000)
+        if len(self.popt) == 0:
             self.ui.fit_text.append("Fit not converged!")
         else:
-            self.ui.plot_widget.plot(self.U,model(self.U,*popt),symbolSize = 2, pen={'color': 'darkred', 'width': 4})
-            for i in range(len(popt)):
-                self.ui.fit_text.append("P{}= {:.2e} +- {:.2e}".format(i,popt[i],pcov[i][i]**0.5))
+            self.ui.plot_widget.plot(self.U,model(self.U,*self.popt),symbolSize = 2, pen={'color': 'darkred', 'width': 4})
+            for i in range(len(self.popt)):
+                self.ui.fit_text.append("P{}= {:.2e} +- {:.2e}".format(i,self.popt[i],pcov[i][i]**0.5))
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
@@ -138,6 +188,32 @@ def main():
     ui.show()
     sys.exit(app.exec())
 
+def save_csv(data,filename):
+    """Saves data to csv file at location "filename".
+
+    Args:
+        data (array): Voltage and current (+ corresponding errors) of the data.
+        filename (string): string of the location of the data
+    """
+    Vled,Iled,Iled_err,Vled_err = data
+
+    df = pd.DataFrame({'Vled(V)':Vled, 'Iled(A)':Iled,'Vled_err':Vled_err,'Iled_err(A)':Iled_err})
+    df.to_csv(filename, sep = ',',index=True,index_label='Index') 
+
+def generate_dict(devices_list):
+    """Generates a dictionary for the devices.
+
+    Args:
+        devices_list (tuple): tuple of str.
+
+    Returns:
+        dictionairy: dictionairy that has an empty element --Choose device-- and the rest of the ports.
+    """
+    dict =  {"":"-- Choose device --"}
+    for i in range(len(devices_list)):
+        dict[f'Port {i}:']= str(devices_list[i])
+
+    return dict
 
 if __name__ == "__main__":
     main()
