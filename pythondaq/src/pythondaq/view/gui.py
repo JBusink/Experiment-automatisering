@@ -96,7 +96,7 @@ class UserInterface(QtWidgets.QMainWindow):
         """
 
         self.ui.Plot_widget.clear()
-        self.ui.Histogram.clear()
+        # self.ui.Histogram.clear()
         self.ui.Residuals.clear()
 
     # def plot_histogram(self,I):
@@ -158,6 +158,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.Plot_widget.setLabel("left","I (mA)")
         self.ui.Plot_widget.setLabel("bottom","U (Volt)")
 
+
     def scan_function(self):
         """Scan function that initializes the devices and performs a voltage-scan on the 
         LED. The start, stop, steps and number of scans can be adjusted. 
@@ -169,9 +170,9 @@ class UserInterface(QtWidgets.QMainWindow):
             scans (int): number of scans.
         """
 
-        # self.device = DiodeExperiment(port=port)
-        print(self.device)
-        self.U,self.I,self.dU,self.dI = self.device.scan_volt(self.ui.Start.value(),self.ui.end.value(),self.ui.steps.value(),self.ui.scans.value())
+        self.data = self.device.scan_volt(self.ui.Start.value(),self.ui.end.value(),self.ui.steps.value(),self.ui.scans.value())
+        self.U,self.I,self.dU,self.dI = self.data
+
 
     def fit(self):
         """Apply a fit function to the data. The data consists of two lists of voltages and currents of the Led. 
