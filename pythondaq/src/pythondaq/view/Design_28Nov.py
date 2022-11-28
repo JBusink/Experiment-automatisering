@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Design_27Nov.ui'
+## Form generated from reading UI file 'Design_28Nov.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.1
 ##
@@ -37,9 +37,9 @@ class Ui_MainWindow(object):
         font.setBold(False)
         self.Plot_widget.setFont(font)
         self.Plot_widget.setMouseTracking(True)
-        self.Plot_widget.setFrameShape(QFrame.Box)
+        self.Plot_widget.setFrameShape(QFrame.NoFrame)
         self.Plot_widget.setFrameShadow(QFrame.Sunken)
-        self.Plot_widget.setLineWidth(2)
+        self.Plot_widget.setLineWidth(0)
         self.label_Fit_results = QLabel(self.centralwidget)
         self.label_Fit_results.setObjectName(u"label_Fit_results")
         self.label_Fit_results.setGeometry(QRect(310, 610, 91, 16))
@@ -65,8 +65,8 @@ class Ui_MainWindow(object):
         self.Residuals = PlotWidget(self.centralwidget)
         self.Residuals.setObjectName(u"Residuals")
         self.Residuals.setGeometry(QRect(10, 70, 761, 111))
-        self.Residuals.setFrameShape(QFrame.Box)
-        self.Residuals.setLineWidth(2)
+        self.Residuals.setFrameShape(QFrame.NoFrame)
+        self.Residuals.setLineWidth(0)
         self.dateTimeEdit = QDateTimeEdit(self.centralwidget)
         self.dateTimeEdit.setObjectName(u"dateTimeEdit")
         self.dateTimeEdit.setGeometry(QRect(620, 40, 151, 21))
@@ -149,19 +149,16 @@ class Ui_MainWindow(object):
         self.fit_text.setObjectName(u"fit_text")
         self.fit_text.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.splitter_5.addWidget(self.fit_text)
-        self.splitter_6 = QSplitter(self.centralwidget)
-        self.splitter_6.setObjectName(u"splitter_6")
-        self.splitter_6.setGeometry(QRect(20, 40, 291, 26))
-        self.splitter_6.setOrientation(Qt.Horizontal)
-        self.label_Fit_results_2 = QLabel(self.splitter_6)
+        
+        self.Device = QComboBox(self.centralwidget)
+        self.Device.setObjectName(u"Device")
+        self.Device.setGeometry(QRect(143, 40, 201, 26))
+        self.label_Fit_results_2 = QLabel(self.centralwidget)
         self.label_Fit_results_2.setObjectName(u"label_Fit_results_2")
+        self.label_Fit_results_2.setGeometry(QRect(20, 40, 121, 19))
         self.label_Fit_results_2.setFont(font1)
         self.label_Fit_results_2.setFrameShape(QFrame.NoFrame)
         self.label_Fit_results_2.setTextFormat(Qt.AutoText)
-        self.splitter_6.addWidget(self.label_Fit_results_2)
-        self.Device = QComboBox(self.splitter_6)
-        self.Device.setObjectName(u"Device")
-        self.splitter_6.addWidget(self.Device)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")

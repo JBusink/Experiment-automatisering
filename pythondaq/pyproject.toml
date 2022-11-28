@@ -30,5 +30,5 @@ build-backend = "poetry.core.masonry.api"
 cli = "pythondaq.view.cli:cmd_group"
 
 [tool.poe.tasks.compile]
-shell = """pyside6-uic src/pythondaq/view/Design_27Nov.ui -o src/pythondaq/view/Design_27Nov.py ,→
+shell = """pyside6-uic src/pythondaq/view/Design_28Nov.ui -o src/pythondaq/view/Design_28Nov.py ,→
 """

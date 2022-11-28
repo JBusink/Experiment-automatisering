@@ -22,7 +22,7 @@ class DiodeExperiment:
             port (int): needs device string, using list_devices we ask for the avaialble ports
             the user is asked to provide the number of the device. 
         """
-        self.device = ArduinoVISADevice(port = str(list_devices()[int(port)]))
+        self.device = ArduinoVISADevice(port = port)
         pass
     
     def get_identification(self):
