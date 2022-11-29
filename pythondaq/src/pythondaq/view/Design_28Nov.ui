@@ -328,19 +328,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>610</y>
-      <width>87</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>CheckBox</string>
-    </property>
-   </widget>
    <widget class="QComboBox" name="Device">
     <property name="geometry">
      <rect>

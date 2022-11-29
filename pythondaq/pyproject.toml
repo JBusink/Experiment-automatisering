@@ -28,6 +28,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 cli = "pythondaq.view.cli:cmd_group"
+gui = "pythondaq.view.gui:main"
 
 [tool.poe.tasks.compile]
 shell = """pyside6-uic src/pythondaq/view/Design_28Nov.ui -o src/pythondaq/view/Design_28Nov.py ,→

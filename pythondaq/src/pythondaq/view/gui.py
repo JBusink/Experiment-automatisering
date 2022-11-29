@@ -6,7 +6,7 @@ The voltage across the diode and the resistor are measured and the
 latter is used to calculate the current flowing through the diode.
 """
 
-from Design_28Nov import Ui_MainWindow
+from pythondaq.view.Design_28Nov import Ui_MainWindow
 from scipy.optimize import curve_fit
 import sys
 from PySide6 import QtWidgets, QtCore
@@ -46,7 +46,6 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.clear_button.clicked.connect(self.clear_plot)
         self.ui.plot_button.clicked.connect(self.update_plot)
         self.ui.scan_button.clicked.connect(self.scan_function)
-        # self.ui.fit_button.clicked.connect(self.fit)
         self.ui.fit_button.toggled.connect(self.fit)
 
 
@@ -62,13 +61,15 @@ class UserInterface(QtWidgets.QMainWindow):
 
         self.show()
 
+
     def activated(self):
         """Function that initializes the port devices
         """
 
         port = self.ui.Device.currentText()
-        self.device = DiodeExperiment(port=port) #need to change this to take the port again.
-        
+        self.device = DiodeExperiment(port=port) 
+
+
     def save(self):
         """Saves the data to .csv file"""
 
@@ -80,11 +81,9 @@ class UserInterface(QtWidgets.QMainWindow):
         """
 
         self.ui.Plot_widget.clear()
-        # self.ui.Histogram.clear()
         self.ui.Residuals.clear()
 
         self.plot_main(self.U,self.I,self.dU,self.dI)
-        # self.plot_histogram(self.I)
 
         if len(self.popt) != 0:
             self.plot_residuals(self.U,self.I,self.dU,self.dI,self.popt)
@@ -92,24 +91,13 @@ class UserInterface(QtWidgets.QMainWindow):
             pass
 
     def clear_plot(self):
-        """Clears plot button.
+        """Clears plots button.
         """
 
         self.ui.Plot_widget.clear()
         # self.ui.Histogram.clear()
         self.ui.Residuals.clear()
 
-    # def plot_histogram(self,I):
-    #     """Plots histogram of y-data using 20 bins, flipped.
-
-    #     Args:
-    #         I (np.array): array of y data (current).
-    #     """
-
-    #     a,b = np.histogram(I,bins=50)
-    #     self.ui.Histogram.plot(a,0.5*(b[1:]+b[:-1]), pen={'color': 'black', 'width': 4})
-    #     self.ui.Histogram.setLabel("left","I (mA)")
-    #     self.ui.Histogram.setLabel("top","P(I)")
 
     def plot_residuals(self,U,I,dU,dI,popt):
         """Plots the residuals based on a predescribed model.
@@ -211,11 +199,6 @@ class UserInterface(QtWidgets.QMainWindow):
 
 				
 
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-    ui = UserInterface()
-    ui.show()
-    sys.exit(app.exec())
 
 def save_csv(data,filename):
     """Saves data to csv file at location "filename".
@@ -243,6 +226,15 @@ def generate_dict(devices_list):
         dict[f'Port {i}:']= str(devices_list[i])
 
     return dict
+
+
+
+def main():
+    app = QtWidgets.QApplication(sys.argv)
+    ui = UserInterface()
+    ui.show()
+    sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()
