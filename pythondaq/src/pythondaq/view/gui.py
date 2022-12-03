@@ -100,7 +100,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.fit_text.clear()
 
         Uled, Iled,Uled_err,Iled_err = list(zip(*self.device.data_measure))
-        self.data = zip(Uled, Iled,Uled_err,Iled_err)
+        # self.data = zip(Uled, Iled,Uled_err,Iled_err)
         Uled, Iled,Uled_err,Iled_err =np.array(Uled), np.array(Iled)*1000,np.array(Uled_err),np.array(Iled_err)*1000 
         self.plot_main(Uled,Iled,Uled_err,Iled_err)
 
@@ -156,10 +156,10 @@ class UserInterface(QtWidgets.QMainWindow):
         # self.activated()
         self.device.start_scan(start,stop,steps,scans)
 
-        self.plot = self.ui.Plot_widget.plot(symbol="o",pen=None,symbolSize=5)
+        # self.plot = self.ui.Plot_widget.plot(symbol="o",pen=None,symbolSize=5)
 
-        self.error_bars = pg.ErrorBarItem(x=[], y=[])
-        self.ui.Plot_widget.addItem(self.error_bars)
+        # self.error_bars = pg.ErrorBarItem(x=[], y=[])
+        # self.ui.Plot_widget.addItem(self.error_bars)
 
     def plot_residuals(self,U,I,dU,dI,popt):
         """Plots the residuals based on a predescribed model.
@@ -170,9 +170,6 @@ class UserInterface(QtWidgets.QMainWindow):
             dU (array): error on U.
             dI (array): error on I.
         """
-        # print('test')
-        # def model(x,a,b,c):
-        #     return a*(np.exp(b*x)-c)
 
         if len(popt) != 0:
             error = pg.ErrorBarItem(x=np.asarray(U), y=(np.asarray(I)-model(U,*popt)), height=2*dI,width = 2*dU)
